@@ -1,0 +1,9 @@
+README.rst
+adsbibdesk.py
+setup.cfg
+setup.py
+adsbibdesk.egg-info/PKG-INFO
+adsbibdesk.egg-info/SOURCES.txt
+adsbibdesk.egg-info/dependency_links.txt
+adsbibdesk.egg-info/entry_points.txt
+adsbibdesk.egg-info/top_level.txt
