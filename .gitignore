@@ -124,6 +124,8 @@ ENV/
 
 *.md
 
+*.DS_Store*
+
 *.tab
 
 *.icloud
@@ -133,3 +135,4 @@ tessworkshop/*
 *TOI*bestfitparams.txt
 *.fits
 Untitled.ipynb
+.DS_Store
