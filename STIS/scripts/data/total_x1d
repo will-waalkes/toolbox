@@ -1,0 +1,54 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Oct 29 14:56:44 2017
+
+@author: willwaalkes
+"""
+
+from glob import glob
+import astropy.io.fits as f
+import astropy.io.fits.hdu.hdulist as h
+import os
+import sys
+import numpy as np
+
+'''THIS CODE WILL CREATE A COMPOSITE X1D SPECTRUM TO USE IN ALLISON YOUNGBLOOD'S CODE'''
+    
+dir_in = '/Users/willwaalkes/Desktop/Colorado/ColoradoResearch/GJ1132b/Calibration_Output/'
+dir_out = '/Users/willwaalkes/Desktop/Colorado/ColoradoResearch/GJ1132b/GJ1132b/Calibration_Output/'
+
+FLT_List = glob(dir_in+'*TT_flt.fits')
+
+#errors = np.zeros(shape=len(FLT_List))
+#fluxes = np.zeros(shape=len(FLT_List))
+errors = []
+f_array = []
+inv_err = []
+
+for filename in FLT_List:
+    
+    hdu = f.open(filename)
+    data = hdu[1].data
+    w = data['wavelength'].flatten()
+    f = data['flux'].flatten()
+    e = data['error'].flatten()
+    header = hdu[1].header
+    
+    f = f*1e14
+    f_array.append(f)
+    e = e*1e14
+    inv_err.append(1/(e**2))
+    
+    name = filename.replace('/Users/willwaalkes/Desktop/Colorado/ColoradoResearch/GJ1132b/TIME-TAG/Calibration_Files/', '')
+    obs = name.replace('flt.fits', '')
+        
+Composite_f = np.sum(np.array(f_array)*np.array(inv_err),axis=0)/np.sum(inv_err,axis=0)
+Composite_err = np.sqrt((1/np.sum(inv_err,axis=0)))
+
+data['wavelength'] = w
+data['flux'] = Composite_f
+data['error'] = Composite_err
+
+x = h.HDUList(hdus=[hdu[0],hdu[1]])
+x.writeto(dir_out+obs+'GJ1132_Total_x1d.fits',overwrite=True)
